@@ -215,38 +215,26 @@ class WCADANsModel(BaseEstimator):
 
 
     def save_check(self):
-            """
-            保存模型的完整逻辑，确保所有参数都被写入字典。
-            """
-            # 1. 构造完整的保存字典 (绝不使用省略号)
+
             save_dict = {
                 'epoch': self.epoch,
-                'model': self.network,                 # 保存模型对象 (可选)
+                'model': self.network,             
                 'optimizer': self._optimizer.state_dict(),
-                'state_dict': self.network.state_dict(), # 显式保存权重字典
+                'state_dict': self.network.state_dict(), 
 
-                # --- 关键参数 ---
                 'layer_num': self.layer,
                 'virtual_batch_size': self.virtual_batch_size,
                 'k': self.k,
                 'base_outdim': self.base_outdim,
 
-                # --- 分数记录 ---
                 'auroc': self.current_auroc,
                 'best_auroc': self.best_auroc
             }
 
-
-            # 3. 如果破纪录，保存 Best
             if self._task == 'classification':
-
-                # 更新记录
                 self.best_auroc = self.current_auroc
                 self.best_epoch = self.epoch
-
-                # 保存 Best 文件
                 torch.save(save_dict, self.log.log_dir + f'/checkpoint{self.F}_best.pth')
-
                 joblib.dump(self.scaler, self.log.log_dir + f'/scalar_oncoKB{self.F}_best.pkl')
 
 
@@ -355,7 +343,7 @@ class WCADANsModel(BaseEstimator):
         if self._task == 'classification':
             # print(y_true)
             # print(scores)
-            valid_auroc = roc_auc_score(y_true, scores)  # 因为 scores 是一个 (N, 1) 的张量
+            valid_auroc = roc_auc_score(y_true, scores)  
             self.current_auroc = valid_auroc
  # Calculate AUROC score
             metrics_logs = {"auroc": valid_auroc}
