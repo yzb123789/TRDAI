@@ -1,4 +1,4 @@
-from DAN_Task import DANetClassifier, DANetRegressor
+from WCADAN_Task import WCADANetClassifier
 from sklearn.metrics import accuracy_score, mean_squared_error
 from lib.multiclass_utils import infer_output_dim
 from lib.utils import normalize_reg_label
@@ -27,11 +27,8 @@ def get_args():
 
 def set_task_model(task):
     if task == 'classification':
-        clf = DANetClassifier()
+        clf = WCADANetClassifier()
         metric = roc_auc_score
-    elif task == 'regression':
-        clf = DANetRegressor()
-        metric = mean_squared_error
     return clf, metric
 
 def prepare_data(task, y_train, y_valid, y_test):
@@ -64,48 +61,22 @@ if __name__ == '__main__':
     df_merge = pd.merge(data,data_vector,on='index')
     gene = df_merge
     df_merge = df_merge.drop(['index'],axis=1)
-    # print(df_merge)
 
-    # 定义特征和目标变量
-    # X = df_merge.drop(columns=["class"]).values  # 假设 target 是目标变量的列名
-    # y = df_merge["class"].values
     scaler = joblib.load('./logs/best/scalar_oncoKB4.pkl')
     X = scaler.transform(df_merge)
-    # output_dim, std, y_train, y_valid, y_test = prepare_data(task, y_train, y_valid, y_test)
     clf, metric = set_task_model(task)
 
     filepath = model_file
     clf.load_model(filepath, input_dim=X.shape[1], output_dim=2, n_gpu=n_gpu)
     
     preds_test = clf.predict(X)
-    # print(preds_test[:,1])
-
-
-    # 假设你已经有了 preds_test 和 df_merge DataFrame
-    # preds_test[1] 是预测结果，df_merge['index'] 是基因列
-
-    # 创建一个新的 DataFrame，将基因列和预测结果列合并
-    # print(preds_test)
-    # print(preds_test.shape)
     result_df = pd.DataFrame({
-        'Gene': gene['index'],  # 基因列
-        'Prediction': preds_test[:, 0]  # 预测结果列
+        'Gene': gene['index'],
+        'Prediction': preds_test[:, 0] 
     })
     
     
     result_df.sort_values(by='Prediction', ascending=False, inplace=True)
 
-    # 保存结果到 CSV 文件
+
     result_df.to_csv('PANCAN-predictions_sigmoid.csv', index=False)
-
-
-#     test_value = roc_auc_score(y, preds_test[:, 1])
-#     # 计算 AUPR
-#     test_aupr = average_precision_score(y, preds_test[:, 1])
-#     print(f"FINAL TEST AUPR FOR cosmic : {test_aupr}")
-    
-#     if task == 'classification':
-#         print(f"FINAL TEST AUROC FOR cosmic : {test_value}")
-
-#     elif task == 'regression':
-#         print(f"FINAL TEST MSE FOR {dataset} : {test_value}")
