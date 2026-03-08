@@ -1,0 +1,74 @@
+import torch
+import numpy as np
+from scipy.special import softmax
+from lib.utils import PredictDataset
+from abstract_model import WCADANsModel
+from lib.multiclass_utils import infer_output_dim, check_output_dim
+from torch.utils.data import DataLoader
+from torch.nn.functional import cross_entropy, mse_loss
+import torch.nn as nn
+import torch.nn.functional as F
+
+class WCADANetClassifier(WCADANsModel):
+    def __post_init__(self):
+        super(WCADANetClassifier, self).__post_init__()
+        self._task = 'classification'
+        # 使用 BCEWithLogitsLoss 来处理二分类任务，保留 logits 输出
+        self._default_loss = F.binary_cross_entropy_with_logits  # 使用 BCEWithLogitsLoss 处理二分类
+        self._default_metric = 'accuracy'
+
+    def weight_updater(self, weights):
+        """
+        更新权重字典
+        """
+        if isinstance(weights, int):
+            return weights
+        elif isinstance(weights, dict):
+            return {self.target_mapper[key]: value for key, value in weights.items()}
+        else:
+            return weights
+
+    def prepare_target(self, y):
+        return np.vectorize(self.target_mapper.get)(y)
+
+    def compute_loss(self, y_pred, y_true):
+
+        y_true = y_true.view(-1, 1) 
+        return self.loss_fn(y_pred, y_true.float()) 
+
+    def update_fit_params(self, X_train, y_train, eval_set):
+        output_dim, train_labels = infer_output_dim(y_train)
+        for X, y in eval_set:
+            check_output_dim(train_labels, y)
+        self.output_dim = 1 
+        self._default_metric = 'accuracy'
+        self.classes_ = train_labels
+        self.target_mapper = {class_label: index for index, class_label in enumerate(self.classes_)}
+        self.preds_mapper = {str(index): class_label for index, class_label in enumerate(self.classes_)}
+
+    def stack_batches(self, list_y_true, list_y_score):
+        y_true = np.hstack(list_y_true)
+        y_score = np.vstack(list_y_score)
+        return y_true, y_score
+
+    def predict_func(self, outputs):
+        outputs = torch.sigmoid(outputs) 
+        return outputs.cpu().detach().numpy()
+
+    def predict_proba(self, X):
+        self.network.eval()
+
+        dataloader = DataLoader(
+            PredictDataset(X),
+            batch_size=1024,
+            shuffle=False,
+        )
+
+        results = []
+        for batch_nb, data in enumerate(dataloader):
+            data = data.to(self.device).float()
+            output = self.network(data)
+            results.append(predictions)
+        res = np.vstack(results)
+        return res
+
