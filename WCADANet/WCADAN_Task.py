@@ -13,8 +13,7 @@ class WCADANetClassifier(WCADANsModel):
     def __post_init__(self):
         super(WCADANetClassifier, self).__post_init__()
         self._task = 'classification'
-        # 使用 BCEWithLogitsLoss 来处理二分类任务，保留 logits 输出
-        self._default_loss = F.binary_cross_entropy_with_logits  # 使用 BCEWithLogitsLoss 处理二分类
+        self._default_loss = F.binary_cross_entropy_with_logits 
         self._default_metric = 'accuracy'
 
     def weight_updater(self, weights):
