@@ -46,6 +46,8 @@ pip install einops==0.8.0
 pip install prettytable==3.11.0
 ```
 
+---
+
 ## Usage
 1.Druggable Gene Prediction: Refer to ./code/WCADANet/main.py to execute model training across pan-cancer datasets.  
 2.Gene Scoring & Evaluation: Refer to ./code/WCADANet/score.py to calculate druggability scores for candidate genes or to evaluate model performance on COSMIC、CIVIC、CGI test sets.  
