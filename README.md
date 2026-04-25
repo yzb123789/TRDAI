@@ -11,8 +11,8 @@ To ensure the immediate reproducibility of the core results and performance metr
 
 ---
 
-## Reproducibility (Highly Recommended)
-
+## Data Acquisition
+All data are available for download at https://codeocean.com/capsule/6137291/tree.
 
 ---
 
@@ -27,7 +27,6 @@ If you prefer to run the analysis locally, we recommend using a Linux environmen
 
 ### 2. Installation
 ```bash
-#
 pip install category-encoders==2.6.4
 pip install yacs==0.1.8
 pip install tensorboard==2.2.2
@@ -48,9 +47,9 @@ pip install prettytable==3.11.0
 ```
 
 ## Usage
-1.Druggable Gene Prediction: Refer to ./code/WCADANet/main.py to execute model training across pan-cancer datasets.
-2.Gene Scoring & Evaluation: Refer to ./code/WCADANet/score.py to calculate druggability scores for candidate genes or to evaluate model performance on COSMIC、CIVIC、CGI test sets.
-3.Gene-Drug Interaction Model Training: Refer to ./code/BiSLANet/train.py to train the Bi-SLA network for GDI prediction.
+1.Druggable Gene Prediction: Refer to ./code/WCADANet/main.py to execute model training across pan-cancer datasets.  
+2.Gene Scoring & Evaluation: Refer to ./code/WCADANet/score.py to calculate druggability scores for candidate genes or to evaluate model performance on COSMIC、CIVIC、CGI test sets.  
+3.Gene-Drug Interaction Model Training: Refer to ./code/BiSLANet/train.py to train the Bi-SLA network for GDI prediction.  
 4.Cross-Dataset Validation: Use ./code/BiSLANet/test.py to evaluate the model on curated GDI test sets from COSMIC, CIViC, and CGI databases.
 
 
