@@ -48,9 +48,9 @@ pip install prettytable==3.11.0
 ```
 
 ## Usage
-Druggable Gene Prediction: Refer to ./code/WCADANet/main.py to execute model training across pan-cancer datasets.
-Gene Scoring & Evaluation: Refer to ./code/WCADANet/score.py to calculate druggability scores for candidate genes or to evaluate model performance on COSMIC、CIVIC、CGI test sets.
-Gene-Drug Interaction Model Training: Refer to ./code/BiSLANet/train.py to train the Bi-SLA network for GDI prediction.
-Cross-Dataset Validation: Use ./code/BiSLANet/test.py to evaluate the model on curated GDI test sets from COSMIC, CIViC, and CGI databases.
+1.Druggable Gene Prediction: Refer to ./code/WCADANet/main.py to execute model training across pan-cancer datasets.
+2.Gene Scoring & Evaluation: Refer to ./code/WCADANet/score.py to calculate druggability scores for candidate genes or to evaluate model performance on COSMIC、CIVIC、CGI test sets.
+3.Gene-Drug Interaction Model Training: Refer to ./code/BiSLANet/train.py to train the Bi-SLA network for GDI prediction.
+4.Cross-Dataset Validation: Use ./code/BiSLANet/test.py to evaluate the model on curated GDI test sets from COSMIC, CIViC, and CGI databases.
 
 
