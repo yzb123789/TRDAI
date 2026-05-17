@@ -1,4 +1,4 @@
-from model import BINDTI
+from model import BiSLANet
 from time import time
 from utils import set_seed, graph_collate_func, mkdir
 from configs import get_cfg_defaults
@@ -22,7 +22,6 @@ device = torch.device(f'cuda:{cuda_id}' if torch.cuda.is_available() else 'cpu')
 #device = 'cpu'
 parser = argparse.ArgumentParser(description="BINDTI for DTI prediction")
 parser.add_argument('--data', type=str, metavar='TASK', help='dataset', default='sample')
-parser.add_argument('--split', default='random1', type=str, metavar='S', help="split task", choices=['random', 'random1', 'random2', 'random3', 'random4'])
 args = parser.parse_args()
 
 def main():
@@ -31,13 +30,12 @@ def main():
     cfg = get_cfg_defaults()
     set_seed(cfg.SOLVER.SEED)
     experiment = None
-    mkdir(cfg.RESULT.OUTPUT_DIR + f'{args.data}/{args.split}')
+    mkdir(cfg.RESULT.OUTPUT_DIR + f'{args.data}')
     print("start...")
     print(f"dataset:{args.data}")
     print(f"Hyperparameters: {dict(cfg)}")
     print(f"Running on: {device}", end="\n\n")
     dataFolder = f'../datasets/{args.data}'
-    dataFolder = os.path.join(dataFolder, str(args.split))
     test_path = os.path.join(dataFolder, "cosmic_pos_neg1-10.csv")
     scaler = joblib.load('./result/scalar_oncoKB.pkl')
     # Main program: iterate over different datasets
@@ -63,7 +61,7 @@ def main():
 
     test_dataset = DTIDataset(merged_df_test.index.values, merged_df_test)
 
-    model = BINDTI(device=device, **cfg).to(device=device)
+    model = BiSLANet(device=device, **cfg).to(device=device)
     opt = torch.optim.Adam(model.parameters(), lr=cfg.SOLVER.LR, weight_decay=cfg.SOLVER.WEIGHT_DECAY)
     params = {'batch_size': cfg.SOLVER.BATCH_SIZE, 'shuffle': True, 'num_workers': cfg.SOLVER.NUM_WORKERS,
                                                                'drop_last':True, 'collate_fn': graph_collate_func}
